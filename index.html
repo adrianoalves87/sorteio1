@@ -2,50 +2,95 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Sorteio Estilo Cassino</title>
+  <title>Sorteio Estilo Futurista</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
-      font-family: 'Arial', sans-serif;
-      background: radial-gradient(circle, #2c3e50, #000);
-      color: white;
+      font-family: 'Orbitron', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #000;
+      color: #fff;
+      padding: 20px;
+    }
+
+    .painel-sorteio {
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+      backdrop-filter: blur(8px) brightness(0.9);
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: 10px;
       text-align: center;
-      padding: 30px;
+      box-shadow: 0 0 20px #00fff7;
     }
 
     h1 {
-      color: #f1c40f;
+      color: #00fff7;
+      text-shadow: 0 0 12px #00fff7;
+      font-size: 32px;
+      margin-bottom: 20px;
     }
 
     input, select, button {
-      padding: 10px;
+      padding: 12px;
       margin: 10px;
       font-size: 16px;
       border-radius: 5px;
+      border: none;
+      outline: none;
+    }
+
+    input, select {
+      background: rgba(255, 255, 255, 0.1);
+      color: #00fff7;
+      border: 1px solid #00fff7;
     }
 
     button {
-      background: #e67e22;
+      background: linear-gradient(45deg, #00fff7, #8e44ad);
       color: white;
-      border: none;
+      font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 0 10px #00fff7;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
     }
 
     .ocupados {
-      margin: 20px 0;
-      color: #ecf0f1;
+      margin: 10px 0;
+      color: #f0f0f0;
     }
 
     .resultado {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: bold;
-      color: #2ecc71;
+      color: #0ff;
       margin-top: 30px;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 15px;
+      border: 2px solid #00fff7;
+      border-radius: 10px;
+      box-shadow: 0 0 20px #00fff7;
+      text-align: center;
     }
 
     #roleta-container {
       position: relative;
-      width: 300px;
-      height: 300px;
+      width: 250px;
+      height: 250px;
       margin: 30px auto;
       display: none;
     }
@@ -53,15 +98,11 @@
     #roleta {
       width: 100%;
       height: 100%;
-      border: 10px solid #ecf0f1;
+      border: 10px solid #00fff7;
       border-radius: 50%;
-      background: conic-gradient(
-        #f39c12 0deg 120deg,
-        #2980b9 120deg 240deg,
-        #c0392b 240deg 360deg
-      );
-      position: relative;
+      background: conic-gradient(#1abc9c 0deg 120deg, #3498db 120deg 240deg, #9b59b6 240deg 360deg);
       animation: girar 3s linear infinite;
+      box-shadow: 0 0 20px #00fff7;
     }
 
     .numero-item {
@@ -69,7 +110,7 @@
       width: 100%;
       height: 100%;
       text-align: center;
-      font-size: 20px;
+      font-size: 16px;
       font-weight: bold;
       color: white;
       transform-origin: center center;
@@ -86,7 +127,6 @@
       to { transform: rotate(360deg); }
     }
 
-    /* Confete */
     .confetti {
       position: fixed;
       width: 10px;
@@ -97,44 +137,40 @@
     }
 
     @keyframes fall {
-      0% {
-        transform: translateY(-10px) rotate(0deg);
-        opacity: 1;
-      }
-      100% {
-        transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
-      }
+      0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
   </style>
 </head>
 <body>
 
-  <h1>Sorteio de R$200 e R$100 🎰</h1>
+  <div class="painel-sorteio">
+    <h1>🔮 Sorteio premiação de R$200 e R$100</h1>
 
-  <input type="text" id="nome" placeholder="Seu nome">
-  <select id="numero">
-    <script>
-      for (let i = 1; i <= 3; i++) { // ou mude para 50 se quiser
-        document.write(`<option value="${i}">${i}</option>`);
-      }
-    </script>
-  </select>
-  <button onclick="cadastrar()">Cadastrar</button>
+    <input type="text" id="nome" placeholder="Digite seu nome">
+    <select id="numero">
+      <script>
+        for (let i = 1; i <= 70; i++) {
+          document.write(`<option value="${i}">${i}</option>`);
+        }
+      </script>
+    </select>
+    <button onclick="cadastrar()">Cadastrar</button>
 
-  <div class="ocupados">
-    <strong>Números ocupados:</strong> <span id="ocupados">Nenhum</span>
+    <div class="ocupados">
+      <strong>Números ocupados:</strong> <span id="ocupados">Nenhum</span>
+    </div>
+
+    <button onclick="sortear()">🎲 Iniciar Sorteio</button>
+
+    <div id="roleta-container">
+      <div id="roleta"></div>
+    </div>
+
+    <div class="resultado" id="resultado"></div>
   </div>
 
-  <button onclick="sortear()">🎲 Rodar Roleta</button>
-
-  <div id="roleta-container">
-    <div id="roleta"></div>
-  </div>
-
-  <div class="resultado" id="resultado"></div>
-
-  <audio id="audioRoleta" src="roleta.mp3" preload="auto"></audio>
+  <audio id="audioRoleta" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
 
   <script>
     const participantes = {};
@@ -170,7 +206,7 @@
     function sortear() {
       const total = Object.keys(participantes).length;
       if (total < 3) {
-        alert("Cadastre os 3 participantes para iniciar o sorteio.");
+        alert("Cadastre pelo menos 3 participantes para iniciar o sorteio.");
         return;
       }
 
@@ -187,19 +223,16 @@
         const item = document.createElement('div');
         item.className = 'numero-item';
         const angle = i * angulo;
-        item.style.transform = `rotate(${angle}deg) translateY(-130px)`;
+        item.style.transform = `rotate(${angle}deg) translateY(-110px)`;
         item.innerHTML = `<span style="--angle: -${angle}deg">${n}</span>`;
         roletaDiv.appendChild(item);
       });
 
       resultado.innerHTML = '';
       roletaContainer.style.display = 'block';
-
-      // tocar som e girar
       audio.currentTime = 0;
       audio.play();
 
-      // girar por 3s, depois mostrar resultado
       setTimeout(() => {
         roletaContainer.style.display = 'none';
         audio.pause();
@@ -212,8 +245,8 @@
         const nome2 = participantes[segundo];
 
         resultado.innerHTML = `
-          🎉 <b>${nome1}</b> ganhou R$200 (número ${primeiro})<br>
-          🎉 <b>${nome2}</b> ganhou R$100 (número ${segundo})
+          🚀 <b>${nome1}</b> ganhou <span style="color:#0f0">R$200</span> (número ${primeiro})<br>
+          🌟 <b>${nome2}</b> ganhou <span style="color:#ff0">R$100</span> (número ${segundo})
         `;
 
         soltarConfete();
@@ -221,7 +254,7 @@
     }
 
     function soltarConfete() {
-      for (let i = 0; i < 100; i++) {
+      for (let i = 0; i < 80; i++) {
         const confete = document.createElement('div');
         confete.className = 'confetti';
         confete.style.left = Math.random() * 100 + "vw";

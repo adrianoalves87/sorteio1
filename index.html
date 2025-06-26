@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Sorteio Estilo Futurista</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap');
@@ -18,7 +18,8 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background-color: #000;
+      background: url('https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?auto=format&fit=crop&w=1470&q=80') no-repeat center center fixed;
+      background-size: cover;
       color: #fff;
       padding: 20px;
     }
@@ -27,8 +28,8 @@
       max-width: 600px;
       width: 100%;
       padding: 40px;
-      backdrop-filter: blur(8px) brightness(0.9);
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
       border-radius: 10px;
       text-align: center;
       box-shadow: 0 0 20px #00fff7;
@@ -147,14 +148,8 @@
   <div class="painel-sorteio">
     <h1>🔮 Sorteio premiação de R$200 e R$100</h1>
 
-    <input type="text" id="nome" placeholder="Digite seu nome">
-    <select id="numero">
-      <script>
-        for (let i = 1; i <= 70; i++) {
-          document.write(`<option value="${i}">${i}</option>`);
-        }
-      </script>
-    </select>
+    <input type="text" id="nome" placeholder="Digite seu nome" />
+    <select id="numero"></select>
     <button onclick="cadastrar()">Cadastrar</button>
 
     <div class="ocupados">
@@ -175,6 +170,15 @@
   <script>
     const participantes = {};
     const ocupadosSet = new Set();
+
+    // Preencher select com números de 1 a 70
+    const selectNumero = document.getElementById('numero');
+    for (let i = 1; i <= 70; i++) {
+      const option = document.createElement('option');
+      option.value = i;
+      option.textContent = i;
+      selectNumero.appendChild(option);
+    }
 
     function atualizarOcupados() {
       const ocupadosSpan = document.getElementById('ocupados');

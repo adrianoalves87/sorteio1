@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Sorteio Estilo Cassino</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: radial-gradient(circle, #2c3e50, #000);
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    h1 {
+      color: #f1c40f;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #e67e22;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    .ocupados {
+      margin: 20px 0;
+      color: #ecf0f1;
+    }
+
+    .resultado {
+      font-size: 22px;
+      font-weight: bold;
+      color: #2ecc71;
+      margin-top: 30px;
+    }
+
+    #roleta-container {
+      position: relative;
+      width: 300px;
+      height: 300px;
+      margin: 30px auto;
+      display: none;
+    }
+
+    #roleta {
+      width: 100%;
+      height: 100%;
+      border: 10px solid #ecf0f1;
+      border-radius: 50%;
+      background: conic-gradient(
+        #f39c12 0deg 120deg,
+        #2980b9 120deg 240deg,
+        #c0392b 240deg 360deg
+      );
+      position: relative;
+      animation: girar 3s linear infinite;
+    }
+
+    .numero-item {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      color: white;
+      transform-origin: center center;
+    }
+
+    .numero-item span {
+      display: inline-block;
+      transform: rotate(var(--angle));
+      margin-top: 10px;
+    }
+
+    @keyframes girar {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Confete */
+    .confetti {
+      position: fixed;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      animation: fall 3s linear infinite;
+      z-index: 1000;
+    }
+
+    @keyframes fall {
+      0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sorteio de R$200 e R$100 🎰</h1>
+
+  <input type="text" id="nome" placeholder="Seu nome">
+  <select id="numero">
+    <script>
+      for (let i = 1; i <= 3; i++) { // ou mude para 50 se quiser
+        document.write(`<option value="${i}">${i}</option>`);
+      }
+    </script>
+  </select>
+  <button onclick="cadastrar()">Cadastrar</button>
+
+  <div class="ocupados">
+    <strong>Números ocupados:</strong> <span id="ocupados">Nenhum</span>
+  </div>
+
+  <button onclick="sortear()">🎲 Rodar Roleta</button>
+
+  <div id="roleta-container">
+    <div id="roleta"></div>
+  </div>
+
+  <div class="resultado" id="resultado"></div>
+
+  <audio id="audioRoleta" src="roleta.mp3" preload="auto"></audio>
+
+  <script>
+    const participantes = {};
+    const ocupadosSet = new Set();
+
+    function atualizarOcupados() {
+      const ocupadosSpan = document.getElementById('ocupados');
+      const numeros = Array.from(ocupadosSet).sort((a, b) => a - b);
+      ocupadosSpan.textContent = numeros.length > 0 ? numeros.join(', ') : "Nenhum";
+    }
+
+    function cadastrar() {
+      const nome = document.getElementById('nome').value.trim();
+      const numero = parseInt(document.getElementById('numero').value);
+
+      if (!nome) {
+        alert("Digite seu nome.");
+        return;
+      }
+
+      if (ocupadosSet.has(numero)) {
+        alert("Esse número já foi escolhido.");
+        return;
+      }
+
+      participantes[numero] = nome;
+      ocupadosSet.add(numero);
+      atualizarOcupados();
+      document.getElementById('nome').value = "";
+      alert(`Número ${numero} cadastrado para ${nome}!`);
+    }
+
+    function sortear() {
+      const total = Object.keys(participantes).length;
+      if (total < 3) {
+        alert("Cadastre os 3 participantes para iniciar o sorteio.");
+        return;
+      }
+
+      const roletaDiv = document.getElementById('roleta');
+      const roletaContainer = document.getElementById('roleta-container');
+      const resultado = document.getElementById('resultado');
+      const audio = document.getElementById('audioRoleta');
+
+      roletaDiv.innerHTML = '';
+      const numeros = Object.keys(participantes).map(n => parseInt(n));
+      const angulo = 360 / numeros.length;
+
+      numeros.forEach((n, i) => {
+        const item = document.createElement('div');
+        item.className = 'numero-item';
+        const angle = i * angulo;
+        item.style.transform = `rotate(${angle}deg) translateY(-130px)`;
+        item.innerHTML = `<span style="--angle: -${angle}deg">${n}</span>`;
+        roletaDiv.appendChild(item);
+      });
+
+      resultado.innerHTML = '';
+      roletaContainer.style.display = 'block';
+
+      // tocar som e girar
+      audio.currentTime = 0;
+      audio.play();
+
+      // girar por 3s, depois mostrar resultado
+      setTimeout(() => {
+        roletaContainer.style.display = 'none';
+        audio.pause();
+
+        const sorteio = [...numeros];
+        const primeiro = sorteio.splice(Math.floor(Math.random() * sorteio.length), 1)[0];
+        const segundo = sorteio[Math.floor(Math.random() * sorteio.length)];
+
+        const nome1 = participantes[primeiro];
+        const nome2 = participantes[segundo];
+
+        resultado.innerHTML = `
+          🎉 <b>${nome1}</b> ganhou R$200 (número ${primeiro})<br>
+          🎉 <b>${nome2}</b> ganhou R$100 (número ${segundo})
+        `;
+
+        soltarConfete();
+      }, 3000);
+    }
+
+    function soltarConfete() {
+      for (let i = 0; i < 100; i++) {
+        const confete = document.createElement('div');
+        confete.className = 'confetti';
+        confete.style.left = Math.random() * 100 + "vw";
+        confete.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 50%)`;
+        confete.style.animationDuration = `${Math.random() * 2 + 2}s`;
+        document.body.appendChild(confete);
+
+        setTimeout(() => confete.remove(), 3000);
+      }
+    }
+  </script>
+
+</body>
+</html>

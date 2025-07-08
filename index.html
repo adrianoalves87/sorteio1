@@ -76,9 +76,9 @@
       transform: scale(1.05);
     }
 
-    /* Novo estilo para o botão do sorteio */
+    /* Botão do sorteio mais para baixo */
     .botao-sorteio {
-      margin-top: 30px; /* espaço maior para evitar clique por acidente */
+      margin-top: 40px; /* espaço maior para evitar clique por acidente */
     }
 
     .ocupados {
@@ -255,6 +255,15 @@
       alert(`Número ${numero} cadastrado para ${nome}!`);
     }
 
+    // Função para embaralhar um array (Fisher-Yates Shuffle)
+    function embaralhar(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
     function sortear() {
       const total = Object.keys(participantes).length;
       if (total < 3) {
@@ -268,9 +277,10 @@
       const audio = document.getElementById('audioRoleta');
 
       roletaDiv.innerHTML = '';
-      const numeros = Object.keys(participantes).map(n => parseInt(n));
+      let numeros = Object.keys(participantes).map(n => parseInt(n));
       const angulo = 360 / numeros.length;
 
+      // Exibe os números na roleta
       numeros.forEach((n, i) => {
         const item = document.createElement('div');
         item.className = 'numero-item';
@@ -289,9 +299,12 @@
         roletaContainer.style.display = 'none';
         audio.pause();
 
-        const sorteio = [...numeros];
-        const primeiro = sorteio.splice(Math.floor(Math.random() * sorteio.length), 1)[0];
-        const segundo = sorteio[Math.floor(Math.random() * sorteio.length)];
+        // Embaralha para garantir aleatoriedade
+        numeros = embaralhar(numeros);
+
+        // Seleciona os dois primeiros como vencedores (sem repetição)
+        const primeiro = numeros[0];
+        const segundo = numeros[1];
 
         const nome1 = participantes[primeiro];
         const nome2 = participantes[segundo];

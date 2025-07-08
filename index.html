@@ -76,6 +76,11 @@
       transform: scale(1.05);
     }
 
+    /* Novo estilo para o botão do sorteio */
+    .botao-sorteio {
+      margin-top: 30px; /* espaço maior para evitar clique por acidente */
+    }
+
     .ocupados {
       margin: 15px 0 10px;
       color: #f0f0f0;
@@ -199,7 +204,7 @@
       <strong>Números ocupados:</strong> <span id="ocupados">Nenhum</span>
     </div>
 
-    <button onclick="sortear()">🎲 Iniciar Sorteio</button>
+    <button class="botao-sorteio" onclick="sortear()">🎲 Iniciar Sorteio</button>
 
     <div id="roleta-container">
       <div id="roleta"></div>
